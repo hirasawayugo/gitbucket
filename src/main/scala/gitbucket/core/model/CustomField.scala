@@ -25,7 +25,7 @@ case class CustomField(
   repositoryName: String,
   fieldId: Int = 0,
   fieldName: String,
-  fieldType: String, // LONG, STRING, BOOLEAN or DATE
+  fieldType: String, // INT, STRING, BOOLEAN or DATE
   enableForIssues: Boolean,
   enableForPullRequests: Boolean
 )

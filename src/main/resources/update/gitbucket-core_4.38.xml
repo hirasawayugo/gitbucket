@@ -23,7 +23,7 @@
     <column name="REPOSITORY_NAME" type="varchar(100)" nullable="false"/>
     <column name="ISSUE_ID" type="int" nullable="false"/>
     <column name="FIELD_ID" type="int" nullable="false"/>
-    <column name="LONG_VALUE" type="long" nullable="true"/>
+    <column name="INT_VALUE" type="int" nullable="true"/>
     <column name="STRING_VALUE" type="text" nullable="true"/>
     <column name="BOOLEAN_VALUE" type="boolean" nullable="true"/>
     <column name="DATE_VALUE" type="datetime" nullable="true"/>
