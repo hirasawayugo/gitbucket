@@ -5,7 +5,7 @@ trait CustomFieldComponent extends TemplateComponent { self: Profile =>
 
   lazy val CustomFields = TableQuery[CustomFields]
 
-  class CustomFields(tag: Tag) extends Table[CustomField](tag, "CUSTOM_FIELD_DEFINITION") with BasicTemplate {
+  class CustomFields(tag: Tag) extends Table[CustomField](tag, "CUSTOM_FIELD") with BasicTemplate {
     val fieldId = column[Int]("FIELD_ID", O AutoInc)
     val fieldName = column[String]("FIELD_NAME")
     val fieldType = column[String]("FIELD_TYPE")
@@ -25,7 +25,7 @@ case class CustomField(
   repositoryName: String,
   fieldId: Int = 0,
   fieldName: String,
-  fieldType: String, // INT, STRING, BOOLEAN or DATE
+  fieldType: String, // number, string, boolean or date
   enableForIssues: Boolean,
   enableForPullRequests: Boolean
 )
