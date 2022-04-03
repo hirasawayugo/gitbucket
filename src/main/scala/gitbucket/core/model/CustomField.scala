@@ -23,7 +23,7 @@ trait CustomFieldComponent extends TemplateComponent { self: Profile =>
 case class CustomField(
   userName: String,
   repositoryName: String,
-  fieldId: Int,
+  fieldId: Int = 0,
   fieldName: String,
   fieldType: String, // LONG, STRING, BOOLEAN or DATE
   enableForIssues: Boolean,
