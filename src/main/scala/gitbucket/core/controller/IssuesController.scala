@@ -21,6 +21,7 @@ class IssuesController
     with ActivityService
     with HandleCommentService
     with IssueCreationService
+    with CustomFieldsService
     with ReadableUsersAuthenticator
     with ReferrerAuthenticator
     with WritableUsersAuthenticator
@@ -41,6 +42,7 @@ trait IssuesControllerBase extends ControllerBase {
     with ActivityService
     with HandleCommentService
     with IssueCreationService
+    with CustomFieldsService
     with ReadableUsersAuthenticator
     with ReferrerAuthenticator
     with WritableUsersAuthenticator
@@ -109,6 +111,7 @@ trait IssuesControllerBase extends ControllerBase {
             getMilestonesWithIssueCount(repository.owner, repository.name),
             getPriorities(repository.owner, repository.name),
             getLabels(repository.owner, repository.name),
+            getCustomFields(repository.owner, repository.name).filter(_.enableForIssues),
             isIssueEditable(repository),
             isIssueManageable(repository),
             isIssueCommentManageable(repository),
@@ -126,6 +129,7 @@ trait IssuesControllerBase extends ControllerBase {
         getPriorities(repository.owner, repository.name),
         getDefaultPriority(repository.owner, repository.name),
         getLabels(repository.owner, repository.name),
+        getCustomFields(repository.owner, repository.name).filter(_.enableForIssues),
         isIssueManageable(repository),
         getContentTemplate(repository, "ISSUE_TEMPLATE"),
         repository

@@ -3,6 +3,7 @@
   priorities: List[gitbucket.core.model.Priority],
   defaultPriority: Option[gitbucket.core.model.Priority],
   labels: List[gitbucket.core.model.Label],
+  customFields: List[gitbucket.core.model.CustomField],
   isManageable: Boolean,
   content: String,
   repository: gitbucket.core.service.RepositoryService.RepositoryInfo)(implicit context: gitbucket.core.controller.Context)
@@ -31,7 +32,7 @@
           </div>
         </div>
         <div class="col-md-3">
-          @gitbucket.core.issues.html.issueinfo(None, Nil, Nil, collaborators, milestones.map(x => (x, 0, 0)), priorities, defaultPriority, labels, isManageable, repository)
+          @gitbucket.core.issues.html.issueinfo(None, Nil, Nil, collaborators, milestones.map(x => (x, 0, 0)), priorities, defaultPriority, labels, customFields, isManageable, repository)
         </div>
       </div>
     </form>
