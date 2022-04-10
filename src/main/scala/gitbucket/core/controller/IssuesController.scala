@@ -378,6 +378,14 @@ trait IssuesControllerBase extends ControllerBase {
     Ok("updated")
   })
 
+  ajaxPost("/:owner/:repository/issues/:id/customfield/:fieldId")(writableUsersOnly { repository =>
+    val issueId = params("id").toInt
+    val fieldId = params("fieldId").toInt
+    val value = params("value")
+    println(value)
+    Ok(value)
+  })
+
   post("/:owner/:repository/issues/batchedit/state")(writableUsersOnly { repository =>
     val action = params.get("value")
     action match {

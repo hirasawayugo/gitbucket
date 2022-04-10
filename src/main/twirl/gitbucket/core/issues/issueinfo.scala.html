@@ -156,16 +156,28 @@
     <div class="pull-right">
       @if(issue.nonEmpty) {
         @if(field.fieldType == "number") {
-          @value.map(_.intValue)
+          <span id="custom-field-@field.fieldId-label" class="custom-field-label">@value.map(_.intValue)</span>
+          @if(isManageable) {
+            <input type="text" class="form-control input-sm custom-field-editor" data-field-id="@field.fieldId" style="width: 120px; display: none;"/>
+          }
         }
         @if(field.fieldType == "string") {
-          @value.map(_.stringValue)
+          <span id="custom-field-@field.fieldId-label" class="custom-field-label">@value.map(_.stringValue)</span>
+          @if(isManageable) {
+            <input type="text" class="form-control input-sm custom-field-editor" data-field-id="@field.fieldId" style="width: 120px; display: none;"/>
+          }
         }
         @if(field.fieldType == "boolean") {
-          @value.map(_.booleanValue)
+          <span id="custom-field-@field.fieldId-label" class="custom-field-label">@value.map(_.booleanValue)</span>
+          @if(isManageable) {
+            <input type="checkbox" class="custom-field-editor" data-field-id="@field.fieldId"  style="display: none;"/>
+          }
         }
         @if(field.fieldType == "date") {
-          @value.flatMap(_.dateValue.map(helpers.date))
+          <span id="custom-field-@field.fieldId-label" class="custom-field-label">@value.flatMap(_.dateValue.map(helpers.date))</span>
+          @if(isManageable) {
+            <input type="date" class="form-control input-sm custom-field-editor" data-field-id="@field.fieldId" style="width: 120px; display: none;"/>
+          }
         }
       }
       @if(issue.isEmpty) {
@@ -206,7 +218,7 @@
 $(function(){
 @issue.map { issue =>
   $('a.toggle-label').click(function(){
-    var path = switchLabel($(this));
+    const path = switchLabel($(this));
     $.post('@helpers.url(repository)/issues/@issue.issueId/label/' + path,
       { labelId : $(this).data('label-id') },
       function(data){
@@ -217,8 +229,8 @@ $(function(){
   });
 
   $('a.milestone').click(function(){
-    var title = $(this).data('title');
-    var milestoneId = $(this).data('id');
+    const title = $(this).data('title');
+    const milestoneId = $(this).data('id');
     $.post('@helpers.url(repository)/issues/@issue.issueId/milestone',
       { milestoneId: milestoneId },
       function(data){
@@ -228,11 +240,11 @@ $(function(){
   });
 
   $('a.priority').click(function(){
-    var priorityName = $(this).data('name');
-    var priorityId = $(this).data('id');
-    var description = $(this).attr('title');
-    var color = $(this).data('color');
-    var fontColor = $(this).data('font-color');
+    const priorityName = $(this).data('name');
+    const priorityId = $(this).data('id');
+    const description = $(this).attr('title');
+    const color = $(this).data('color');
+    const fontColor = $(this).data('font-color');
     $.post('@helpers.url(repository)/issues/@issue.issueId/priority',
       { priorityId: priorityId },
       function(data){
@@ -242,8 +254,8 @@ $(function(){
   });
 
   $('a.assign').click(function(){
-    var $this = $(this);
-    var userName = $this.data('name');
+    const $this = $(this);
+    const userName = $this.data('name');
     $.post('@helpers.url(repository)/issues/@issue.issueId/assign',
       { assignedUserName: userName },
       function(){
@@ -251,10 +263,39 @@ $(function(){
       }
     );
   });
+
+  @if(isManageable){
+    $('.custom-field-label').click(function(){
+      const $this = $(this);
+      $this.hide();
+      $this.next().val($this.text()).show().focus();
+    });
+
+    $('.custom-field-editor').focusout(function(){
+      const $this = $(this);
+      const fieldId = $this.data('field-id');
+      $.post('@helpers.url(repository)/issues/@issue.issueId/customfield/' + fieldId,
+        { value: $this.val() },
+        function(data){
+          $this.hide();
+          $this.prev().text(data).show();
+        }
+      );
+    });
+
+    // ESC key handling in text field
+    $('.custom-field-editor[type=text]').keyup(function(e){
+      if (e.keyCode == 27) {
+        const $this = $(this);
+        $this.hide();
+        $this.prev().show();
+      }
+    });
+  }
 }.getOrElse {
   $('a.toggle-label').click(function(){
     switchLabel($(this));
-    var labelNames = Array();
+    const labelNames = Array();
     $('a.toggle-label').each(function(i, e){
       if($(e).children('i').hasClass('octicon-check') == true){
         labelNames.push($(e).text().trim());
@@ -271,32 +312,32 @@ $(function(){
   });
 
   $('a.milestone').click(function(){
-    var title = $(this).data('title');
-    var milestoneId = $(this).data('id');
+    const title = $(this).data('title');
+    const milestoneId = $(this).data('id');
     displayMilestone(title, milestoneId);
     $('input[name=milestoneId]').val(milestoneId);
   });
 
   $('a.priority').click(function(){
-    var priorityName = $(this).data('name');
-    var priorityId = $(this).data('id');
-    var description = $(this).attr('title');
-    var color = $(this).data('color');
-    var fontColor = $(this).data('font-color');
+    const priorityName = $(this).data('name');
+    const priorityId = $(this).data('id');
+    const description = $(this).attr('title');
+    const color = $(this).data('color');
+    const fontColor = $(this).data('font-color');
     displayPriority(priorityName, priorityId, description, color, fontColor);
     $('input[name=priorityId]').val(priorityId);
   });
 
   $('a.assign').click(function(){
-    var $this = $(this);
-    var userName = $this.data('name');
+    const $this = $(this);
+    const userName = $this.data('name');
     displayAssignee($this, userName);
     $('input[name=assignedUserName]').val(userName);
   });
 }
 
   function switchLabel($this){
-    var i = $this.children('i');
+    const i = $this.children('i');
     if(i.hasClass('octicon-check')){
       i.removeClass('octicon-check');
       return 'delete';
