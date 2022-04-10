@@ -135,7 +135,7 @@ trait PullRequestsControllerBase extends ControllerBase {
               getMilestonesWithIssueCount(repository.owner, repository.name),
               getPriorities(repository.owner, repository.name),
               getLabels(repository.owner, repository.name),
-              getCustomFields(repository.owner, repository.name).filter(_.enableForPullRequests),
+              getCustomFieldsWithValue(repository.owner, repository.name, issueId).filter(_._1.enableForPullRequests),
               isEditable(repository),
               isManageable(repository),
               hasDeveloperRole(pullreq.requestUserName, pullreq.requestRepositoryName, context.loginAccount),

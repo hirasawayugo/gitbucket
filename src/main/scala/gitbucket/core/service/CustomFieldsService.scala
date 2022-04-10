@@ -12,6 +12,17 @@ trait CustomFieldsService {
   def getCustomFields(owner: String, repository: String)(implicit s: Session): List[CustomField] =
     CustomFields.filter(_.byRepository(owner, repository)).sortBy(_.fieldId asc).list
 
+  def getCustomFieldsWithValue(owner: String, repository: String, issueId: Int)(
+    implicit s: Session
+  ): List[(CustomField, Option[IssueCustomField])] = {
+    CustomFields
+      .filter(_.byRepository(owner, repository))
+      .joinLeft(IssueCustomFields)
+      .on { case (t1, t2) => t1.fieldId === t2.fieldId && t2.issueId === issueId.bind }
+      .sortBy { case (t1, t2) => t1.fieldId }
+      .list
+  }
+
   def getCustomField(owner: String, repository: String, fieldId: Int)(implicit s: Session): Option[CustomField] =
     CustomFields.filter(_.byPrimaryKey(owner, repository, fieldId)).firstOption
 
@@ -72,7 +83,7 @@ trait CustomFieldsService {
     value: String
   )(implicit s: Session): Unit = {
     val customFieldValue = field.fieldType match {
-      case "text" =>
+      case "string" =>
         Some(
           IssueCustomField(
             userName = userName,
@@ -85,7 +96,7 @@ trait CustomFieldsService {
             dateValue = None
           )
         )
-      case "int" =>
+      case "number" =>
         Some(
           IssueCustomField(
             userName = userName,

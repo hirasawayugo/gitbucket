@@ -6,7 +6,7 @@
   priorities: List[gitbucket.core.model.Priority],
   defaultPriority: Option[gitbucket.core.model.Priority],
   labels: List[gitbucket.core.model.Label],
-  customFields: List[gitbucket.core.model.CustomField],
+  customFields: List[(gitbucket.core.model.CustomField, Option[gitbucket.core.model.IssueCustomField])],
   isManageable: Boolean,
   repository: gitbucket.core.service.RepositoryService.RepositoryInfo)(implicit context: gitbucket.core.controller.Context)
 @import gitbucket.core.view.helpers
@@ -149,22 +149,38 @@
   <input type="hidden" name="assignedUserName" value=""/>
 }
 
-@customFields.map { customField =>
+@customFields.map { case (field, value) =>
   <hr/>
   <div style="margin-bottom: 14px;">
-    <span class="muted small strong">@customField.fieldName</span>
+    <span class="muted small strong">@field.fieldName</span>
     <div class="pull-right">
-      @if(customField.fieldType == "number") {
-        <input type="text" class="form-control input-sm" id="custom-field-@customField.fieldId" name="custom-field-@customField.fieldId" style="width: 120px;"/>
+      @if(issue.nonEmpty) {
+        @if(field.fieldType == "number") {
+          @value.map(_.intValue)
+        }
+        @if(field.fieldType == "string") {
+          @value.map(_.stringValue)
+        }
+        @if(field.fieldType == "boolean") {
+          @value.map(_.booleanValue)
+        }
+        @if(field.fieldType == "date") {
+          @value.flatMap(_.dateValue.map(helpers.date))
+        }
       }
-      @if(customField.fieldType == "string") {
-        <input type="text" class="form-control input-sm" id="custom-field-@customField.fieldId" name="custom-field-@customField.fieldId" style="width: 120px;"/>
-      }
-      @if(customField.fieldType == "boolean") {
-        <input type="checkbox" id="custom-field-@customField.fieldId" name="custom-field-@customField.fieldId"/>
-      }
-      @if(customField.fieldType == "date") {
-        <input type="date" class="form-control input-sm" id="custom-field-@customField.fieldId" name="custom-field-@customField.fieldId" style="width: 120px;"/>
+      @if(issue.isEmpty) {
+        @if(field.fieldType == "number") {
+          <input type="text" class="form-control input-sm" id="custom-field-@field.fieldId" name="custom-field-@field.fieldId" style="width: 120px;"/>
+        }
+        @if(field.fieldType == "string") {
+          <input type="text" class="form-control input-sm" id="custom-field-@field.fieldId" name="custom-field-@field.fieldId" style="width: 120px;"/>
+        }
+        @if(field.fieldType == "boolean") {
+          <input type="checkbox" id="custom-field-@field.fieldId" name="custom-field-@field.fieldId"/>
+        }
+        @if(field.fieldType == "date") {
+          <input type="date" class="form-control input-sm" id="custom-field-@field.fieldId" name="custom-field-@field.fieldId" style="width: 120px;"/>
+        }
       }
     </div>
   </div>

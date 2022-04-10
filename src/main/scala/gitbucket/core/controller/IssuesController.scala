@@ -111,7 +111,7 @@ trait IssuesControllerBase extends ControllerBase {
             getMilestonesWithIssueCount(repository.owner, repository.name),
             getPriorities(repository.owner, repository.name),
             getLabels(repository.owner, repository.name),
-            getCustomFields(repository.owner, repository.name).filter(_.enableForIssues),
+            getCustomFieldsWithValue(repository.owner, repository.name, issueId.toInt).filter(_._1.enableForIssues),
             isIssueEditable(repository),
             isIssueManageable(repository),
             isIssueCommentManageable(repository),
