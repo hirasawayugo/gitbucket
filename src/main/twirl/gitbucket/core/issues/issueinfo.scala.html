@@ -155,16 +155,16 @@
     <span class="muted small strong">@customField.fieldName</span>
     <div class="pull-right">
       @if(customField.fieldType == "number") {
-        <input type="text" class="form-control input-sm" id="custom-field-@customField.fieldName" name="custom-field-@customField.fieldName" style="width: 120px;"/>
+        <input type="text" class="form-control input-sm" id="custom-field-@customField.fieldId" name="custom-field-@customField.fieldId" style="width: 120px;"/>
       }
       @if(customField.fieldType == "string") {
-        <input type="text" class="form-control input-sm" id="custom-field-@customField.fieldName" name="custom-field-@customField.fieldName" style="width: 120px;"/>
+        <input type="text" class="form-control input-sm" id="custom-field-@customField.fieldId" name="custom-field-@customField.fieldId" style="width: 120px;"/>
       }
       @if(customField.fieldType == "boolean") {
-        <input type="checkbox" id="custom-field-@customField.fieldName" name="custom-field-@customField.fieldName"/>
+        <input type="checkbox" id="custom-field-@customField.fieldId" name="custom-field-@customField.fieldId"/>
       }
       @if(customField.fieldType == "date") {
-        <input type="date" class="form-control input-sm" id="custom-field-@customField.fieldName" name="custom-field-@customField.fieldName" style="width: 120px;"/>
+        <input type="date" class="form-control input-sm" id="custom-field-@customField.fieldId" name="custom-field-@customField.fieldId" style="width: 120px;"/>
       }
     </div>
   </div>

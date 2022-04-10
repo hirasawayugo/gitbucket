@@ -151,6 +151,18 @@ trait IssuesControllerBase extends ControllerBase {
             form.labelNames.toSeq.flatMap(_.split(",")),
             loginAccount
           )
+
+          // Insert custom field values
+          params.toMap.foreach {
+            case (key, value) =>
+              if (key.startsWith("custom-field-")) {
+                getCustomField(repository.owner, repository.name, key.replaceFirst("^custom-field-", "").toInt)
+                  .foreach { field =>
+                    insertCustomFieldValue(field, repository.owner, repository.name, issue.issueId, value)
+                  }
+              }
+          }
+
           redirect(s"/${issue.userName}/${issue.repositoryName}/issues/${issue.issueId}")
         } else Unauthorized()
     }

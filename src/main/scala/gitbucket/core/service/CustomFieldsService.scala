@@ -1,8 +1,11 @@
 package gitbucket.core.service
 
-import gitbucket.core.model.CustomField
+import gitbucket.core.model.{CustomField, IssueCustomField}
 import gitbucket.core.model.Profile._
 import gitbucket.core.model.Profile.profile.blockingApi._
+
+import java.text.SimpleDateFormat
+import scala.util.Try
 
 trait CustomFieldsService {
 
@@ -51,5 +54,81 @@ trait CustomFieldsService {
       .filter(t => t.userName === owner.bind && t.repositoryName === repository.bind && t.fieldId === fieldId.bind)
       .delete
     CustomFields.filter(_.byPrimaryKey(owner, repository, fieldId)).delete
+  }
+
+  def getCustomFieldValues(
+    userName: String,
+    repositoryName: String,
+    issueId: Int,
+  )(implicit s: Session): List[IssueCustomField] = {
+    IssueCustomFields.filter(_.byIssue(userName, repositoryName, issueId)).list
+  }
+
+  def insertCustomFieldValue(
+    field: CustomField,
+    userName: String,
+    repositoryName: String,
+    issueId: Int,
+    value: String
+  )(implicit s: Session): Unit = {
+    val customFieldValue = field.fieldType match {
+      case "text" =>
+        Some(
+          IssueCustomField(
+            userName = userName,
+            repositoryName = repositoryName,
+            issueId = issueId,
+            fieldId = field.fieldId,
+            stringValue = Some(value),
+            booleanValue = None,
+            intValue = None,
+            dateValue = None
+          )
+        )
+      case "int" =>
+        Some(
+          IssueCustomField(
+            userName = userName,
+            repositoryName = repositoryName,
+            issueId = issueId,
+            fieldId = field.fieldId,
+            stringValue = None,
+            booleanValue = None,
+            intValue = value.toIntOption,
+            dateValue = None
+          )
+        )
+      case "boolean" =>
+        Some(
+          IssueCustomField(
+            userName = userName,
+            repositoryName = repositoryName,
+            issueId = issueId,
+            fieldId = field.fieldId,
+            stringValue = None,
+            booleanValue = value.toBooleanOption,
+            intValue = None,
+            dateValue = None
+          )
+        )
+      case "date" =>
+        Some(
+          IssueCustomField(
+            userName = userName,
+            repositoryName = repositoryName,
+            issueId = issueId,
+            fieldId = field.fieldId,
+            stringValue = None,
+            booleanValue = None,
+            intValue = None,
+            dateValue = Try(new SimpleDateFormat("yyyy-MM-dd").parse(value)).toOption
+          )
+        )
+      case _ => None
+    }
+
+    customFieldValue.foreach { value =>
+      IssueCustomFields.insert(value)
+    }
   }
 }
